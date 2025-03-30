@@ -303,7 +303,70 @@ public class Main {
     // }
 
 
+   
+    // public static void main(String[] args) {
+    //     if (args.length != 1) {
+    //         System.err.println("Usage: java Main <inputFileName>");
+    //         return;
+    //     }
 
+    //     String inputFileName = args[0];
+    //     String outputFileName = inputFileName + "_output.txt";
+
+    //     try (Scanner scanner = new Scanner(new File(inputFileName));
+    //         //  PrintWriter writer = new PrintWriter(new File(outputFileName)))
+    //         PrintWriter writer = new PrintWriter(new FileOutputStream(outputFileName, true))) {
+
+    //         outputWriter = writer;
+
+    //         while (scanner.hasNextLine()) {
+    //             String commandLine = scanner.nextLine().trim();
+    //             if (commandLine.isEmpty()) continue;
+
+    //             String[] parts = commandLine.split("[(), ]+");
+    //             String command = parts[0];
+
+    //             switch (command.toLowerCase()) {
+    //                 case "addlicence":
+    //                     if (parts.length == 1) {
+    //                         addLicence(); // Generate random plate
+    //                     } else {
+    //                         addLicence(parts[1]); // Add custom plate
+    //                     }
+    //                     break;
+    //                 case "droplicence":
+    //                     if (parts.length > 1) dropLicence(parts[1]);
+    //                     break;
+    //                 case "lookuplicence":
+    //                     if (parts.length > 1) lookupLicence(parts[1]);
+    //                     break;
+    //                 case "lookupprev":
+    //                     if (parts.length > 1) lookupPrev(parts[1]);
+    //                     break;
+    //                 case "lookupnext":
+    //                     if (parts.length > 1) lookupNext(parts[1]);
+    //                     break;
+    //                 case "lookuprange":
+    //                     if (parts.length > 2) lookupRange(parts[1], parts[2]);
+    //                     break;
+    //                 case "revenue":
+    //                     revenue();
+    //                     break;
+    //                 case "quit":
+    //                     quit();
+    //                     return;
+    //                 default:
+    //                     outputWriter.println("Invalid command: " + command);
+    //             }
+    //         }
+    //     } catch (FileNotFoundException e) {
+    //         System.err.println("Error: Input file not found.");
+    //     }
+    // }
+
+
+
+    // private static PrintWriter outputWriter;
     public static void main(String[] args) {
         if (args.length != 1) {
             System.err.println("Usage: java Main <inputFileName>");
@@ -313,26 +376,23 @@ public class Main {
         String inputFileName = args[0];
         String outputFileName = inputFileName + "_output.txt";
 
-        try (Scanner scanner = new Scanner(new File(inputFileName));
-            //  PrintWriter writer = new PrintWriter(new File(outputFileName)))
-            PrintWriter writer = new PrintWriter(new FileOutputStream(outputFileName, true))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFileName));
+             PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(outputFileName)))) {
 
             outputWriter = writer;
+            String commandLine;
 
-            while (scanner.hasNextLine()) {
-                String commandLine = scanner.nextLine().trim();
+            while ((commandLine = reader.readLine()) != null) {
+                commandLine = commandLine.trim();
                 if (commandLine.isEmpty()) continue;
 
-                String[] parts = commandLine.split("[(), ]+");
-                String command = parts[0];
+                String[] parts = commandLine.split("[(),\\s]+");
+                String command = parts[0].toLowerCase();
 
-                switch (command.toLowerCase()) {
+                switch (command) {
                     case "addlicence":
-                        if (parts.length == 1) {
-                            addLicence(); // Generate random plate
-                        } else {
-                            addLicence(parts[1]); // Add custom plate
-                        }
+                        if (parts.length == 1) addLicence();
+                        else addLicence(parts[1]);
                         break;
                     case "droplicence":
                         if (parts.length > 1) dropLicence(parts[1]);
@@ -359,8 +419,9 @@ public class Main {
                         outputWriter.println("Invalid command: " + command);
                 }
             }
-        } catch (FileNotFoundException e) {
-            System.err.println("Error: Input file not found.");
+        } catch (IOException e) {
+            System.err.println("Error: Unable to read input file.");
         }
     }
+
 }
